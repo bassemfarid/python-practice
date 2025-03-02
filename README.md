@@ -2,19 +2,20 @@
 
 ## How to Solve Problems
 
-1. Open the ##-##-##.md file in each folder to read the problem instructions.
-2. Create a ##-##-##.py file in the same folder.
-3. Write your program solution according to the problem instructions.
-4. Run the ##-##-##-test.py file in the same folder. Adjust your program until all tests pass.
+1. Begin by forking this repository than cloning it to your local machine.
+2. Open the ##-##-##.md file in each folder to read the problem instructions.
+3. Create a ##-##-##.py file in the same folder.
+4. Write your program solution according to the problem instructions.
+5. Run the ##-##-##-test.py file in the same folder. Adjust your program until all tests pass.
 
 ## Getting Updates
 
 As new problems are added, you’ll need to pull updates into your fork.
 
-First, ensure this repository is set as the upstream remote. If it’s not, add it by the following command, where YOUR-ORG is your organization name:
+First, ensure this repository is set as the upstream remote. If it’s not, add it:
 
 ```sh
-git remote add upstream https://github.com/YOUR-ORG/python-practice.git
+git remote add upstream https://github.com/bassemfarid/python-practice.git
 ```
 
 Then, fetch updates and merge them:
