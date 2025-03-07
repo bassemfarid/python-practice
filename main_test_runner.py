@@ -1,3 +1,4 @@
+import math
 import os
 import subprocess
 import sys
@@ -5,6 +6,14 @@ import time
 
 # Configuration
 TIMEOUT_SECONDS = 2  # Adjust as needed
+
+
+def is_numeric(value):
+    try:
+        float(value)
+        return True
+    except ValueError:
+        return False
 
 
 def run_test(
@@ -34,7 +43,13 @@ def run_test(
         execution_time_ms = round((end_time - start_time) * 1000, 2)
         actual_output = result.stdout.strip()
 
-        passed = actual_output == expected_output
+        if is_numeric(actual_output) and is_numeric(expected_output):
+            passed = math.isclose(
+                float(actual_output), float(expected_output), rel_tol=1e-9
+            )
+        else:
+            passed = actual_output == expected_output
+
         return passed, actual_output, execution_time_ms
 
     except subprocess.TimeoutExpired:
