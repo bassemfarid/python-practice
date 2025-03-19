@@ -37,7 +37,7 @@ python-practice/
 │── .venv/
 │
 ├── 01-02/  # Unit-Chapter
-│   │── 01-02-01.py  # Students create this script
+│   │── 01-02-01.py  # Student created script
 │   │── 01-02-01-test.py  # Runs tests for the problem
 │   ├── 01-02-01-tests/  # Test cases folder
 │   │   ├── 01-02-01.1-01.in
@@ -46,5 +46,22 @@ python-practice/
 │   │   ├── 01-02-01.sample-01.out
 │
 ├── 01-03/
-│   ├── ...
+│   ├── 01-03.md  # instructions for activity
+|
+├── 01-04/
+|   ├── 01-04-0X.py  # Student created script
+|   ├── 01-04-0X-test.py  # Runs tests for the problem
+|   ├── 01-04-01-tests/  # Test cases folder
+│   │   ├── 01-04-0X.1-0X.in
+│   │   ├── 01-04-0X.1-0X.out
+│   │   ├── 01-04-0X.sample-01.in
+│   │   ├── 01-04-0X.sample-01.out
+|
+├── 01-05/
+|   ├── 01-05-0X.py  # Student created script
+|   ├── 01-05-0X-test.py  # Runs tests for the problem
+│   ├── 01-05-0X-tests/  # Test cases folder
+│   │   ├── 01-05-01.sample-01.in
+│   │   ├── 01-05-01.sample-01.out
+
 ```
