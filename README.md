@@ -37,13 +37,13 @@ python-practice/
 │── .venv/
 │
 ├── 01-02/  # Unit-Chapter
-│   │── 01-02-01.py  # Students create this script
-│   │── 01-02-01-test.py  # Runs tests for the problem
-│   ├── 01-02-01-tests/  # Test cases folder
-│   │   ├── 01-02-01.1-01.in
-│   │   ├── 01-02-01.1-01.out
-│   │   ├── 01-02-01.sample-01.in
-│   │   ├── 01-02-01.sample-01.out
+│   ├── 01-02-01/  # Problem folder
+│   │   ├── 01-02-01.md  # Problem instructions
+│   │   ├── 01-02-01.py  # Students create this script
+│   │   ├── 01-02-01-test.py  # Runs tests for the problem
+│   │   ├── 01-02-01-tests/  # Test cases folder
+│   │   │   ├── 01-02-01.1-01.in  # Test case input
+│   │   │   ├── 01-02-01.1-01.out  # Test case output
 │
 ├── 01-03/
 │   ├── ...
