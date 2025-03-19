@@ -44,6 +44,9 @@ python-practice/
 │   │   ├── 01-02-01-tests/  # Test cases folder
 │   │   │   ├── 01-02-01.1-01.in  # Test case input
 │   │   │   ├── 01-02-01.1-01.out  # Test case output
+│   │
+│   ├── 01-02-02/
+│   │   ├── ...
 │
 ├── 01-03/
 │   ├── ...
