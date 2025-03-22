@@ -8,7 +8,11 @@
 4. **Test Your Solution** – Run the following command in the terminal:  
 
    ```sh
-   python3 test.py XX-XX-XX
+    # On macOS/Linux
+    python3 test.py XX-XX-XX  
+
+    # On Windows
+    python test.py XX-XX-XX  
    ```
 
 **NOTE:** Replace XX-XX-XX with the problem ID (e.g., 01-02-01). This will automatically check your solution using the provided test cases.
@@ -29,7 +33,7 @@ As new problems are added, you’ll need to pull updates into your fork.
     git fetch upstream
     git merge upstream/main --allow-unrelated-histories --no-commit --no-ff
     ```
-    If this is your first merge from upstream, Git may ask you to resolve conflicts or enter a commit message.
+    If this is your first merge from upstream, Git may ask you to resolve conflicts or enter a commit message. If not, you can exclude `--allow-unrelated-histories`.
 3. **Commit** – Commit the changes you merged in.
     ```sh
     git commit -m "Merged updates from upstream"
