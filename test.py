@@ -27,7 +27,9 @@ def get_timeout(test_folder):
 
 def get_student_script(problem_id):
     unit, chapter, _ = problem_id.split("-")
-    location = os.path.join(unit, chapter, f"{problem_id}.py")
+    location = os.path.join(
+        f"Unit-{unit}", f"Chapter-{chapter}", f"{problem_id}.py"
+    )
     if not os.path.exists(location):
         print(f"Student script not found: {location}")
         sys.exit(1)
@@ -53,7 +55,7 @@ def run_io_test(test_folder, student_script):
     timeout = get_timeout(test_folder)
 
     for group in sorted_groups:
-        print(f"Running {group} tests...")
+        print(f"Running batch {group} tests...")
         for test_file in sorted(test_groups[group]):
             test_name = test_file[:-3]  # Remove .in extension
             expected_output_file = os.path.join(
