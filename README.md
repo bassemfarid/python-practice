@@ -22,7 +22,7 @@
 As new problems are added, you’ll need to pull updates into your fork.
 
 
-1. **Add Upstream Remove** – Ensure this repository is set as the upstream remote. If it’s not, add it:
+1. **Add Upstream Remote** – Ensure this repository is set as the upstream remote. If it’s not, add it:
 
     ```sh
     git remote add upstream https://github.com/bassemfarid/python-practice.git
