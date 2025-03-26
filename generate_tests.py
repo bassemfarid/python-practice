@@ -1,4 +1,3 @@
-import numpy as np
 import sys
 import os
 import re
@@ -11,14 +10,6 @@ NUM_TEST_CASES = 5
 NUM_BATCHES = 2
 
 load_dotenv()
-
-def generate_numeric_input(low: int, high: int, type: str):
-    if type == "int":
-        test_input = int(np.random.randint(low, high, size=1)[0])
-    elif type == "float":
-        test_input = float(np.random.uniform(low, high, size=1)[0])
-
-    return test_input
 
 def generate_test_cases(model_output: dict, num_test_cases: int, num_batches: int, problem_editorial):
     test_cases = []
@@ -112,7 +103,7 @@ def main():
 
                     Your response will be a json schema that provides {NUM_TEST_CASES} test cases that suits the problem's description for {NUM_BATCHES} batches.
                     The response will be a 2D array. Each row will represent a batch of test cases. Each column will represent a test case.
-                    The order of the test cases should be the same as the order of the input types in the problem statement.
+                    The order of the inputs in each test case should match the order of the input specification in the problem statement.
                     You should not provide the desired output.
 
                     Example problem statement with input specification:
@@ -145,13 +136,14 @@ def main():
                         [
                             ["Chrome"], # Test case 1 for batch 1
                             ["chrome"] # Test case 2 for batch 1
-                            # so on
+                            # continue if more test cases
                         ],
                         [
                             ["Firefox"], # Test case 1 for batch 2
                             ["firefox"] # Test case 2 for batch 2
                             # so on
                         ]
+                        # continue if more batches
                     ]
                 '''
                 },
