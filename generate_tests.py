@@ -12,7 +12,7 @@ NUM_BATCHES = 2
 
 load_dotenv()
 
-def generate_test_input(low: int, high: int, type: str):
+def generate_numeric_input(low: int, high: int, type: str):
     if type == "int":
         test_input = int(np.random.randint(low, high, size=1)[0])
     elif type == "float":
@@ -25,26 +25,13 @@ def generate_test_cases(model_output: dict, num_test_cases: int, num_batches: in
 
     for i in range(num_batches):
         for j in range(num_test_cases):
-            curr = model_output["input_specifications"]
+            curr = model_output["test_cases"][i][j]
             test_case = {
                 "batch": i + 1,
                 "case": j + 1,
-                "inputs": [],
+                "inputs": list(map(str, curr)),
                 "output": ""
             }
-
-            for problem_input in curr:
-                if problem_input["type"] != "int" and problem_input["type"] != "float":
-                    raise Exception("Invalid input type. We currently only support int and float")
-
-                else:
-                    test_case["inputs"].append(
-                        str(generate_test_input(
-                            problem_input["low"], 
-                            problem_input["high"], 
-                            problem_input["type"]
-                        ))
-                    )
             
             test_output = generate_test_output('\n'.join(test_case["inputs"]), problem_editorial)
             test_case["output"] = test_output
@@ -71,7 +58,7 @@ def generate_test_output(input_data: str, problem_editorial):
 
 def create_test_files(test_cases: list, problem_id: str):
     folder_path = os.path.join('tests', problem_id)
-    os.makedirs(folder_path)
+    os.makedirs(folder_path, exist_ok=True)
 
     for test_case in test_cases:
         file_name = f"{test_case['batch']}-{str(test_case['case']).zfill(2)}"
@@ -116,32 +103,56 @@ def main():
             model="deepseek-chat",
             messages=[{
                 "role": "system", 
-                "content": '''
+                "content": f'''
                     You are a helpful assistant for a computer science class. 
                     In the computer science class, we give students problems to solve.
 
                     You are given a problem statement and an editorial for a problem. 
-                    You need to extract the input types for the problem based off of the problem statement's input specification.
                     The problem statement will provide constraints and the data type for each input in markdown.
-                    Your response will be a json schema that provides the extracted data type and bounds if applicable.
 
-                    Example problem statement input specification:
+                    Your response will be a json schema that provides {NUM_TEST_CASES} test cases that suits the problem's description for {NUM_BATCHES} batches.
+                    The response will be a 2D array. Each row will represent a batch of test cases. Each column will represent a test case.
+                    The order of the test cases should be the same as the order of the input types in the problem statement.
+                    You should not provide the desired output.
 
+                    Example problem statement with input specification:
                     ```
+                    # Unit 2 Chapter 2 Question 6 - Browser Check  
+                    Create a program that takes in a browser name and outputs whether it is **Chrome or Firefox**.  
+
                     ## Input Specification  
-                    The line of input contains a number, *N*, where `-1000000 ≤ N ≤ 1000000`.
+                    The line of input contains a string, *B*, representing the browser name.  
+
+                    ## Output Specification  
+                    The output will be a boolean value, either `True` or `False`.  
+
+                    ## Sample Input
+                    ```
+                    Chrome
+                    ```
+
+                    ## Output for Sample Input
+                    ```
+                    True
+                    ```
+
+                    ## Explanation of Output for Sample Input  
+                    Since the input string is **"Chrome"**, which is one of the accepted browsers (Chrome or Firefox), the output is `True`.
                     ```
 
                     Your output:
-                    "input_specifications": {
+                    "test_cases": [
                         [
-                            {
-                                "type": "float", # or "int"
-                                "low": -1000000,
-                                "high": 1000000,
-                            }
+                            ["Chrome"], # Test case 1 for batch 1
+                            ["chrome"] # Test case 2 for batch 1
+                            # so on
+                        ],
+                        [
+                            ["Firefox"], # Test case 1 for batch 2
+                            ["firefox"] # Test case 2 for batch 2
+                            # so on
                         ]
-                    }
+                    ]
                 '''
                 },
                 {
@@ -153,31 +164,6 @@ def main():
         )
         
         raw = response.choices[0].message.content.strip()
-        '''
-        raw = """
-        ```json
-        {
-            "input_specifications": [
-                {
-                    "type": "int",
-                    "low": 0,
-                    "high": 100
-                },
-                {
-                    "type": "int",
-                    "low": 0,
-                    "high": 100
-                },
-                {
-                    "type": "int",
-                    "low": 0,
-                    "high": 100
-                }
-            ]
-        }
-        ```
-        """'
-        '''
 
         json_string = re.search(r'```json\n(.*?)```', raw, re.DOTALL).group(1)
         model_output = json.loads(json_string)
