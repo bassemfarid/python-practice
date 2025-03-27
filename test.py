@@ -136,7 +136,11 @@ def run_single_io_test(
 def run_unit_test(test_script):
     """Run a unit test script and return success status."""
     try:
-        subprocess.run(["python3", test_script], check=True)
+        subprocess.run(
+            ["python3", test_script],
+            check=True,
+            timeout=get_timeout(os.path.dirname(test_script)),
+        )
         return True
     except subprocess.CalledProcessError:
         print(f"Unit test script {test_script} failed.")
