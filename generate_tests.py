@@ -23,12 +23,12 @@ def generate_test_cases(model_output: dict, num_test_cases: int, num_batches: in
                 "inputs": list(map(str, curr)),
                 "output": ""
             }
-            
+
             test_output = generate_test_output('\n'.join(test_case["inputs"]), problem_editorial)
             test_case["output"] = test_output
 
             test_cases.append(test_case)
-        
+
     return test_cases
 
 def generate_test_output(input_data: str, problem_editorial):
@@ -42,7 +42,7 @@ def generate_test_output(input_data: str, problem_editorial):
 
     if not result.stdout or result.stderr:
         raise Exception(f"Error: {result.stderr}")
-    
+
     actual_output = result.stdout.strip()
 
     return actual_output
@@ -62,10 +62,10 @@ def create_test_files(test_cases: list, problem_id: str):
 
         with open(input_file, 'w') as infile:
             infile.write(input_data)
-        
+
         with open(output_file, 'w') as outfile:
             outfile.write(output_data)
-        
+
         print(f"Batch {test_case['batch']} test case {test_case['case']} generated")
 
 def main():
@@ -97,40 +97,32 @@ def main():
                 "content": f'''
                     You are a helpful assistant for a computer science class. 
                     In the computer science class, we give students problems to solve.
-
                     You are given a problem statement and an editorial for a problem. 
                     The problem statement will provide constraints and the data type for each input in markdown.
-
                     Your response will be a json schema that provides {NUM_TEST_CASES} test cases that suits the problem's description for {NUM_BATCHES} batches.
                     The response will be a 2D array. Each row will represent a batch of test cases. Each column will represent a test case.
-                    The order of the inputs in each test case should match the order of the input specification in the problem statement.
-                    You should not provide the desired output.
+                    The order of the inputs in each test case should match the order of the input specification in the problem statement. BE SURE TO THINK ABOUT EDGE CASES.
+                    You should not provide the desired output or put any explanation in the response.
 
                     Example problem statement with input specification:
                     ```
                     # Unit 2 Chapter 2 Question 6 - Browser Check  
                     Create a program that takes in a browser name and outputs whether it is **Chrome or Firefox**.  
-
                     ## Input Specification  
                     The line of input contains a string, *B*, representing the browser name.  
-
                     ## Output Specification  
                     The output will be a boolean value, either `True` or `False`.  
-
                     ## Sample Input
                     ```
                     Chrome
                     ```
-
                     ## Output for Sample Input
                     ```
                     True
                     ```
-
                     ## Explanation of Output for Sample Input  
                     Since the input string is **"Chrome"**, which is one of the accepted browsers (Chrome or Firefox), the output is `True`.
                     ```
-
                     Your output:
                     "test_cases": [
                         [
@@ -145,6 +137,8 @@ def main():
                         ]
                         # continue if more batches
                     ]
+
+                    DO NOT INCLUDE COMMENTS IN YOUR JSON TO ENSURE IT IS JSON PARSEABLE. I ONLY INCLUDED COMMENTS FOR YOUR UNDERSTANDING.
                 '''
                 },
                 {
@@ -154,11 +148,15 @@ def main():
             ],
             stream=False
         )
-        
+
         raw = response.choices[0].message.content.strip()
 
         json_string = re.search(r'```json\n(.*?)```', raw, re.DOTALL).group(1)
+
+        print(json_string)
         model_output = json.loads(json_string)
+
+        print(model_output)
 
         test_cases = generate_test_cases(model_output, NUM_TEST_CASES, NUM_BATCHES, problem_editorial)
 
