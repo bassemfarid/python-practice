@@ -137,7 +137,7 @@ def run_unit_test(test_script):
     """Run a unit test script and return success status."""
     try:
         subprocess.run(
-            ["python3", test_script],
+            ["python" if sys.platform == "win32" else "python3", test_script],
             check=True,
             timeout=get_timeout(os.path.dirname(test_script)),
         )
