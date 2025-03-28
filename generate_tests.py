@@ -152,8 +152,6 @@ def main():
         raw = response.choices[0].message.content.strip()
 
         json_string = re.search(r'```json\n(.*?)```', raw, re.DOTALL).group(1)
-
-        print(json_string)
         model_output = json.loads(json_string)
 
         print(model_output)
