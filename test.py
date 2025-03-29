@@ -6,6 +6,7 @@ import time
 
 
 def is_numeric(value):
+    """Check if a value is numeric (int or float)."""
     try:
         float(value)
         return True
@@ -14,6 +15,12 @@ def is_numeric(value):
 
 
 def get_timeout(test_folder):
+    """
+    Get the timeout value.
+
+    Timeout is read from a file named "timeout.txt" in the test folder.
+    If the file does not exist or contains an invalid value, defaults to 1 second.
+    """
     timeout_file = os.path.join(test_folder, "timeout.txt")
     if os.path.exists(timeout_file):
         try:
@@ -22,14 +29,17 @@ def get_timeout(test_folder):
                 return max(1, min(timeout, 5))  # Clamp between 1 and 5 seconds
         except ValueError:
             pass
-    return 2  # Default to 2 seconds
+    return 1
 
 
 def get_student_script(problem_id):
+    """Get the path to the student's script based on the problem ID."""
+    if "-" not in problem_id:
+        print(f"Invalid problem ID format: {problem_id}")
+        print("Expected format: <unit>-<chapter>-<problem>")
+        sys.exit(1)
     unit, chapter, _ = problem_id.split("-")
-    location = os.path.join(
-        f"Unit-{unit}", f"Chapter-{chapter}", f"{problem_id}.py"
-    )
+    location = os.path.join(f"Unit-{unit}", f"Chapter-{chapter}", f"{problem_id}.py")
     if not os.path.exists(location):
         print(f"Student script not found: {location}")
         sys.exit(1)
@@ -38,67 +48,63 @@ def get_student_script(problem_id):
 
 def run_io_test(test_folder, student_script):
     """Run all I/O tests in the test folder. Stops on batch failure."""
-    test_groups = {}
+    batches = {}
     for f in sorted(os.listdir(test_folder)):
         if f.endswith(".in"):
-            group_name = f.rsplit("-", 1)[0]
-            if group_name not in test_groups:
-                test_groups[group_name] = []
-            test_groups[group_name].append(f)
+            batch_name = f.rsplit("-", 1)[0]
+            if batch_name not in batches:
+                batches[batch_name] = []
+            batches[batch_name].append(f[:-3])
 
-    # Ensures sample tests are run first
-    sorted_groups = sorted(
-        test_groups.keys(),
+    # Orders the batches so that "sample" comes first to fail fast if needed
+    sorted_batches = sorted(
+        batches.keys(),
         key=lambda x: (x != "sample", int(x) if x.isdigit() else sys.maxsize),
     )
 
     timeout = get_timeout(test_folder)
 
-    for group in sorted_groups:
-        print(f"Running batch {group} tests...")
-        for test_file in sorted(test_groups[group]):
-            test_name = test_file[:-3]  # Remove .in extension
-            expected_output_file = os.path.join(
-                test_folder, f"{test_name}.out"
-            )
+    for batch in sorted_batches:
+        print("=" * 40)
+        print(f"Running batch {batch} tests...")
+        for test_id in sorted(batches[batch]):
+            expected_output_file = os.path.join(test_folder, f"{test_id}.out")
             if not os.path.exists(expected_output_file):
                 print(f"Missing expected output file: {expected_output_file}")
                 continue
 
-            input_file = os.path.join(test_folder, test_file)
-            passed, actual_output, execution_time_ms = run_single_io_test(
+            input_file = os.path.join(test_folder, f"{test_id}.in")
+            passed, io_info, execution_time_ms = run_single_io_test(
                 input_file, expected_output_file, student_script, timeout
             )
 
             if passed:
-                print(
-                    f"{test_name}: \033[92mPASS\033[0m ({execution_time_ms} ms)"
-                )  # Green
+                print(f"{test_id}: \033[92mPASS\033[0m ({execution_time_ms} ms)")  # Green
             else:
-                print(
-                    f"{test_name}: \033[91mFAIL\033[0m ({execution_time_ms} ms)"
-                )  # Red
+                # Provide student with failure message, which includes:
+                # execution time, input, expected output, actual output
+                print(f"{test_id}: \033[91mFAIL\033[0m ({execution_time_ms} ms)")  # Red
+                print("\n\033[93mFor Input:\033[0m")
+                print(io_info[0])
                 print("\n\033[93mExpected Output:\033[0m")
-                print(open(expected_output_file).read().strip())
+                print(io_info[1])
                 print("\n\033[93mActual Output:\033[0m")
-                print(actual_output)
+                print(io_info[2])
                 print("=" * 40)
-                if group == "sample":
+                if batch == "sample":
                     print("Sample tests failed. Aborting further testing.")
                     return
                 else:
-                    print(
-                        f"Batch {group} failed. Skipping remaining tests in this batch."
-                    )
+                    print(f"Batch {batch} failed. Skipping remaining tests in this batch.")
                     break
 
 
-def run_single_io_test(
-    input_file, expected_output_file, student_script, timeout
-):
+def run_single_io_test(input_file, expected_output_file, student_script, timeout):
+    """Run a single I/O test and return success status and info."""
+
+    # Pull the input and expected output from the files
     with open(input_file, "r") as f:
         input_data = f.read()
-
     with open(expected_output_file, "r") as f:
         expected_output = f.read().strip()
 
@@ -118,13 +124,11 @@ def run_single_io_test(
 
         # Account for floating point errors
         if is_numeric(actual_output) and is_numeric(expected_output):
-            passed = math.isclose(
-                float(actual_output), float(expected_output), rel_tol=1e-9
-            )
+            passed = math.isclose(float(actual_output), float(expected_output), rel_tol=1e-9)
         else:
             passed = actual_output == expected_output
 
-        return passed, actual_output, execution_time_ms
+        return (passed, (input_data, expected_output, actual_output), execution_time_ms)
 
     except subprocess.TimeoutExpired:
         return False, "Timed out", timeout * 1000
@@ -137,7 +141,7 @@ def run_unit_test(test_script):
     """Run a unit test script and return success status."""
     try:
         subprocess.run(
-            ["python" if sys.platform == "win32" else "python3", test_script],
+            [sys.executable, test_script],
             check=True,
             timeout=get_timeout(os.path.dirname(test_script)),
         )
@@ -154,9 +158,7 @@ def main():
             sys.exit(1)
 
         problem_id = sys.argv[1]
-        student_script = get_student_script(
-            problem_id
-        )  # Will exit if not found
+        student_script = get_student_script(problem_id)  # Will exit if not found
         test_folder = os.path.join("tests", problem_id)
         test_script = os.path.join(test_folder, f"test_{problem_id}.py")
 
@@ -165,16 +167,15 @@ def main():
             print(f"Test folder not found: {test_folder}")
             sys.exit(1)
 
-        # If a unit test script exists, run it. Failure abort further testing.
+        # If a unit test script exists, run it
+        # If unit test fails, abort any further testing
         if os.path.exists(test_script):
             if not run_unit_test(test_script):
                 print("Unit tests failed. Aborting further testing.")
                 sys.exit(1)
 
         # If I/O tests are present, run them
-        io_test_files = [
-            f for f in os.listdir(test_folder) if f.endswith(".in")
-        ]
+        io_test_files = [f for f in os.listdir(test_folder) if f.endswith(".in")]
         if io_test_files:
             run_io_test(test_folder, student_script)
 
