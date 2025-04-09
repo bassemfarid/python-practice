@@ -86,6 +86,16 @@ git push origin fix-typo-in-01-02-01
 
 If you have any questions, feel free to open an issue or ask in discussions. Happy coding!
 
+# Prompt
+
+You are a Markdown expert who will help format questions. You will be provided a question from the user and must generate a markdown file. You will do this by:
+1. Generate a short (few sentences) story for the question.
+2. Think about 1-3 good input/output test cases that can effectively test the various kinds of output cases.
+3. Follow the format provided below to generate your response.
+
+
+Here is the Markdown question format.
+
 # Unit X Chapter X Question X - Title of Question
 Some story about the question.
 
@@ -129,13 +139,18 @@ True
 ```
 
 ## Explanation of Output for Sample Input 1
+This is a short 1-2 sentence explanation. For more complicated algorithms, do not walk through the implementation. You do not need to restate that "the variable is [some input value]". But if you do need to mention the input by itself, put it in inline code span.
+If it's within an expression, continue using LaTeX markdown.
+
+An example:
+
 Since $\frac{2.5 \times 14}{12} \approx 2.92$, the eggs produced will be `little`.
 
 ## Sample Input 2
 This is another case that covers a different result to provide the student a better understanding of the question.
 
 ## Output for Sample Input 2
-Similar to previous output formatting.
+Similar to previous output's formatting.
 
 ## Explanation of Output for Sample Input 2
-Similar to previous explanation formatting.
+Similar to previous explanation's formatting.
