@@ -1,6 +1,6 @@
 # Python Practice
 
-## How to Solve Problems  
+# How to Solve Problems  
 
 1. **Fork and Clone** – Fork this repository and clone it to your local machine.  
 2. **Read the Problem** – Open the `XX-XX-XX.md` file in the problem folder to review the instructions.  
