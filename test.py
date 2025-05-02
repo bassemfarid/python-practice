@@ -84,12 +84,17 @@ def run_io_test(test_folder, student_script):
                 # Provide student with failure message, which includes:
                 # execution time, input, expected output, actual output
                 print(f"{test_id}: \033[91mFAIL\033[0m ({execution_time_ms} ms)")  # Red
-                print("\n\033[93mFor Input:\033[0m")
-                print(io_info[0])
-                print("\n\033[93mExpected Output:\033[0m")
-                print(io_info[1])
-                print("\n\033[93mActual Output:\033[0m")
-                print(io_info[2])
+                if isinstance(io_info, tuple):
+                    print("\n\033[93mOutput does not match expected output:\033[0m")
+                    print("\n\033[93mFor Input:\033[0m")
+                    print(io_info[0])
+                    print("\n\033[93mExpected Output:\033[0m")
+                    print(io_info[1])
+                    print("\n\033[93mActual Output:\033[0m")
+                    print(io_info[2])
+                else:
+                    print("\n\033[93mAn Error Occurred:\033[0m"))
+                    print(io_info)
                 print("=" * 40)
                 if batch == "sample":
                     print("Sample tests failed. Aborting further testing.")
@@ -131,7 +136,7 @@ def run_single_io_test(input_file, expected_output_file, student_script, timeout
         return (passed, (input_data, expected_output, actual_output), execution_time_ms)
 
     except subprocess.TimeoutExpired:
-        return False, "Timed out", timeout * 1000
+        return False, "Time Limit Exceeded!", timeout * 1000
 
     except Exception as e:
         return False, str(e), 0
