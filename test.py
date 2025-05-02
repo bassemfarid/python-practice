@@ -92,8 +92,9 @@ def run_io_test(test_folder, student_script):
                     print(io_info[1])
                     print("\n\033[93mActual Output:\033[0m")
                     print(io_info[2])
+                # Provide instead with the specific exception that was thrown
                 else:
-                    print("\n\033[93mAn Error Occurred:\033[0m"))
+                    print("\n\033[93mAn Error Occurred:\033[0m")
                     print(io_info)
                 print("=" * 40)
                 if batch == "sample":
