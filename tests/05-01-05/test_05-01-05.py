@@ -17,19 +17,18 @@ spec.loader.exec_module(student_solution)
 
 
 class TestStudentSolution(unittest.TestCase):
-    def test_convert_to_celsius(self):
-        self.assertAlmostEqual(student_solution.convertToCelsius(0), -17.77777777777778)
-        self.assertAlmostEqual(student_solution.convertToCelsius(180), 82.22222222222223)
-
-    def test_convert_to_fahrenheit(self):
-        self.assertAlmostEqual(student_solution.convertToFahrenheit(0), 32)
-        self.assertAlmostEqual(student_solution.convertToFahrenheit(100), 212)
-
-    def test_inverse(self):
-        val = 15
-        f = student_solution.convertToFahrenheit(val)
-        c = student_solution.convertToCelsius(f)
-        self.assertAlmostEqual(c, val)
+    def test_ordinal_suffix(self):
+        self.assertEqual(student_solution.ordinalSuffix(0), "0th")
+        self.assertEqual(student_solution.ordinalSuffix(1), "1st")
+        self.assertEqual(student_solution.ordinalSuffix(2), "2nd")
+        self.assertEqual(student_solution.ordinalSuffix(3), "3rd")
+        self.assertEqual(student_solution.ordinalSuffix(4), "4th")
+        self.assertEqual(student_solution.ordinalSuffix(10), "10th")
+        self.assertEqual(student_solution.ordinalSuffix(11), "11th")
+        self.assertEqual(student_solution.ordinalSuffix(12), "12th")
+        self.assertEqual(student_solution.ordinalSuffix(13), "13th")
+        self.assertEqual(student_solution.ordinalSuffix(14), "14th")
+        self.assertEqual(student_solution.ordinalSuffix(101), "101st")
 
 
 if __name__ == "__main__":

@@ -17,19 +17,17 @@ spec.loader.exec_module(student_solution)
 
 
 class TestStudentSolution(unittest.TestCase):
-    def test_convert_to_celsius(self):
-        self.assertAlmostEqual(student_solution.convertToCelsius(0), -17.77777777777778)
-        self.assertAlmostEqual(student_solution.convertToCelsius(180), 82.22222222222223)
+    def test_file_read_write(self):
+        student_solution.writeToFile("__greet.txt", "Hello!\n")
+        student_solution.appendToFile("__greet.txt", "Goodbye!\n")
+        # Handled differently to account for file deletion
+        if (contents := student_solution.readFromFile("__greet.txt")) != "Hello!\nGoodbye!\n":
+            os.remove("__greet.txt")
 
-    def test_convert_to_fahrenheit(self):
-        self.assertAlmostEqual(student_solution.convertToFahrenheit(0), 32)
-        self.assertAlmostEqual(student_solution.convertToFahrenheit(100), 212)
-
-    def test_inverse(self):
-        val = 15
-        f = student_solution.convertToFahrenheit(val)
-        c = student_solution.convertToCelsius(f)
-        self.assertAlmostEqual(c, val)
+            # Make contents readable
+            contents.replace('\n', "\\n")
+            raise AssertionError(f"Contents of the file (should be \"Hello!\\nGoodbye!\\n\"): \"{contents}\"")
+        os.remove("__greet.txt")
 
 
 if __name__ == "__main__":

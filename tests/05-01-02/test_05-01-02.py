@@ -17,19 +17,19 @@ spec.loader.exec_module(student_solution)
 
 
 class TestStudentSolution(unittest.TestCase):
-    def test_convert_to_celsius(self):
-        self.assertAlmostEqual(student_solution.convertToCelsius(0), -17.77777777777778)
-        self.assertAlmostEqual(student_solution.convertToCelsius(180), 82.22222222222223)
-
-    def test_convert_to_fahrenheit(self):
-        self.assertAlmostEqual(student_solution.convertToFahrenheit(0), 32)
-        self.assertAlmostEqual(student_solution.convertToFahrenheit(100), 212)
-
-    def test_inverse(self):
-        val = 15
-        f = student_solution.convertToFahrenheit(val)
-        c = student_solution.convertToCelsius(f)
-        self.assertAlmostEqual(c, val)
+    def test_is_odd(self):
+        self.assertFalse(student_solution.isOdd(42))
+        self.assertTrue(student_solution.isOdd(9999))
+        self.assertFalse(student_solution.isOdd(-10))
+        self.assertTrue(student_solution.isOdd(-11))
+        self.assertFalse(student_solution.isOdd(3.1415))
+    
+    def test_is_even(self):
+        self.assertTrue(student_solution.isEven(42))
+        self.assertFalse(student_solution.isEven(9999))
+        self.assertTrue(student_solution.isEven(-10))
+        self.assertFalse(student_solution.isEven(-11))
+        self.assertFalse(student_solution.isEven(3.1415))
 
 
 if __name__ == "__main__":

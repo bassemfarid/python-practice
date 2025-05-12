@@ -17,19 +17,12 @@ spec.loader.exec_module(student_solution)
 
 
 class TestStudentSolution(unittest.TestCase):
-    def test_convert_to_celsius(self):
-        self.assertAlmostEqual(student_solution.convertToCelsius(0), -17.77777777777778)
-        self.assertAlmostEqual(student_solution.convertToCelsius(180), 82.22222222222223)
-
-    def test_convert_to_fahrenheit(self):
-        self.assertAlmostEqual(student_solution.convertToFahrenheit(0), 32)
-        self.assertAlmostEqual(student_solution.convertToFahrenheit(100), 212)
-
-    def test_inverse(self):
-        val = 15
-        f = student_solution.convertToFahrenheit(val)
-        c = student_solution.convertToCelsius(f)
-        self.assertAlmostEqual(c, val)
+    def test_find_and_replace(self):
+        self.assertEqual(student_solution.findAndReplace("The fox", "fox", "dog"), "The dog")
+        self.assertEqual(student_solution.findAndReplace("fox", "fox", "dog"), "dog")
+        self.assertEqual(student_solution.findAndReplace("Firefox", "fox", "dog"), "Firedog")
+        self.assertEqual(student_solution.findAndReplace("foxfox", "fox", "dog"), "dogdog")
+        self.assertEqual(student_solution.findAndReplace("The Fox and fox.", "fox", "dog"), "The Fox and dog.")
 
 
 if __name__ == "__main__":

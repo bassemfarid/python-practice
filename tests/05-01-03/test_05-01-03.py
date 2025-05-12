@@ -17,19 +17,25 @@ spec.loader.exec_module(student_solution)
 
 
 class TestStudentSolution(unittest.TestCase):
-    def test_convert_to_celsius(self):
-        self.assertAlmostEqual(student_solution.convertToCelsius(0), -17.77777777777778)
-        self.assertAlmostEqual(student_solution.convertToCelsius(180), 82.22222222222223)
+    def test_area(self):
+        self.assertEqual(student_solution.area(10, 10), 100)
+        self.assertEqual(student_solution.area(0, 9999), 0)
+        self.assertEqual(student_solution.area(5, 8), 40)
 
-    def test_convert_to_fahrenheit(self):
-        self.assertAlmostEqual(student_solution.convertToFahrenheit(0), 32)
-        self.assertAlmostEqual(student_solution.convertToFahrenheit(100), 212)
+    def test_perimeter(self):
+        self.assertEqual(student_solution.perimeter(10, 10), 40)
+        self.assertEqual(student_solution.perimeter(0, 9999), 19998)
+        self.assertEqual(student_solution.perimeter(5, 8), 26)
 
-    def test_inverse(self):
-        val = 15
-        f = student_solution.convertToFahrenheit(val)
-        c = student_solution.convertToCelsius(f)
-        self.assertAlmostEqual(c, val)
+    def test_volume(self):
+        self.assertEqual(student_solution.volume(10, 10, 10), 1000)
+        self.assertEqual(student_solution.volume(9999, 0, 9999), 0)
+        self.assertEqual(student_solution.volume(5, 8, 10), 400)
+    
+    def test_surface_area(self):
+        self.assertEqual(student_solution.surfaceArea(10, 10, 10), 600)
+        self.assertEqual(student_solution.surfaceArea(9999, 0, 9999), 199960002)
+        self.assertEqual(student_solution.surfaceArea(5, 8, 10), 0)
 
 
 if __name__ == "__main__":

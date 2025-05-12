@@ -17,19 +17,22 @@ spec.loader.exec_module(student_solution)
 
 
 class TestStudentSolution(unittest.TestCase):
-    def test_convert_to_celsius(self):
-        self.assertAlmostEqual(student_solution.convertToCelsius(0), -17.77777777777778)
-        self.assertAlmostEqual(student_solution.convertToCelsius(180), 82.22222222222223)
-
-    def test_convert_to_fahrenheit(self):
-        self.assertAlmostEqual(student_solution.convertToFahrenheit(0), 32)
-        self.assertAlmostEqual(student_solution.convertToFahrenheit(100), 212)
-
-    def test_inverse(self):
-        val = 15
-        f = student_solution.convertToFahrenheit(val)
-        c = student_solution.convertToCelsius(f)
-        self.assertAlmostEqual(c, val)
+    def test_square_colours(self):
+        # Get the student func and be sure to account for spelling errors
+        if hasattr(student_solution, "getChessSquareColour"):
+            student_func = student_solution.getChessSquareColour
+        elif hasattr(student_solution, "getChessSquareColor"):
+            student_func = student_solution.getChessSquareColor
+        else:
+            raise NameError("No getChessSquareColour or getChessSquareColor found in solution")
+        
+        # Perform the tests
+        self.assertEqual(student_func(1, 1), "white")
+        self.assertEqual(student_func(2, 1), "black")
+        self.assertEqual(student_func(1, 2), "black")
+        self.assertEqual(student_func(8, 8), "white")
+        self.assertEqual(student_func(0, 8), "")
+        self.assertEqual(student_func(2, 9), "")
 
 
 if __name__ == "__main__":
