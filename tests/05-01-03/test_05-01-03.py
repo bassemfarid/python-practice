@@ -31,11 +31,11 @@ class TestStudentSolution(unittest.TestCase):
         self.assertEqual(student_solution.volume(10, 10, 10), 1000)
         self.assertEqual(student_solution.volume(9999, 0, 9999), 0)
         self.assertEqual(student_solution.volume(5, 8, 10), 400)
-    
+
     def test_surface_area(self):
         self.assertEqual(student_solution.surfaceArea(10, 10, 10), 600)
         self.assertEqual(student_solution.surfaceArea(9999, 0, 9999), 199960002)
-        self.assertEqual(student_solution.surfaceArea(5, 8, 10), 0)
+        self.assertEqual(student_solution.surfaceArea(5, 8, 10), 340)
 
 
 if __name__ == "__main__":
