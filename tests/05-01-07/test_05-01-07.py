@@ -25,11 +25,13 @@ class TestStudentSolution(unittest.TestCase):
             os.remove("__greet.txt")
 
             # Make contents readable
-            contents.replace('\n', "\\n")
-            raise AssertionError(f"Contents of the file (should be \"Hello!\\nGoodbye!\\n\"): \"{contents}\"")
+            contents.replace("\n", "\\n")
+            raise AssertionError(
+                f'Contents of the file (should be "Hello!\\nGoodbye!\\n"): "{contents}"'
+            )
         os.remove("__greet.txt")
 
 
 if __name__ == "__main__":
-    runner = unittest.TextTestRunner(verbosity=1)
+    runner = unittest.TextTestRunner()
     unittest.main(testRunner=runner)

@@ -22,9 +22,11 @@ class TestStudentSolution(unittest.TestCase):
         self.assertEqual(student_solution.findAndReplace("fox", "fox", "dog"), "dog")
         self.assertEqual(student_solution.findAndReplace("Firefox", "fox", "dog"), "Firedog")
         self.assertEqual(student_solution.findAndReplace("foxfox", "fox", "dog"), "dogdog")
-        self.assertEqual(student_solution.findAndReplace("The Fox and fox.", "fox", "dog"), "The Fox and dog.")
+        self.assertEqual(
+            student_solution.findAndReplace("The Fox and fox.", "fox", "dog"), "The Fox and dog."
+        )
 
 
 if __name__ == "__main__":
-    runner = unittest.TextTestRunner(verbosity=1)
+    runner = unittest.TextTestRunner()
     unittest.main(testRunner=runner)

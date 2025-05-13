@@ -23,7 +23,7 @@ class TestStudentSolution(unittest.TestCase):
         self.assertFalse(student_solution.isOdd(-10))
         self.assertTrue(student_solution.isOdd(-11))
         self.assertFalse(student_solution.isOdd(3.1415))
-    
+
     def test_is_even(self):
         self.assertTrue(student_solution.isEven(42))
         self.assertFalse(student_solution.isEven(9999))
@@ -33,5 +33,5 @@ class TestStudentSolution(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    runner = unittest.TextTestRunner(verbosity=1)
+    runner = unittest.TextTestRunner()
     unittest.main(testRunner=runner)
