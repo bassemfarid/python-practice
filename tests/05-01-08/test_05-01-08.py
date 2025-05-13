@@ -25,12 +25,14 @@ class TestStudentSolution(unittest.TestCase):
             student_func = student_solution.getChessSquareColor
         else:
             raise NameError("No getChessSquareColour or getChessSquareColor found in solution")
-        
+
         # Perform the tests
+        self.assertEqual(student_func(0, 0), "white")
         self.assertEqual(student_func(1, 1), "white")
         self.assertEqual(student_func(2, 1), "black")
         self.assertEqual(student_func(1, 2), "black")
-        self.assertEqual(student_func(8, 8), "white")
+        self.assertEqual(student_func(7, 7), "white")
+        self.assertEqual(student_func(8, 8), "")
         self.assertEqual(student_func(0, 8), "")
         self.assertEqual(student_func(2, 9), "")
 
