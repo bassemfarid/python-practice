@@ -207,12 +207,16 @@ def run_unit_test(test_script: str) -> bool:
         return False
 
 
-def main():
-    """Main function"""
+def main() -> int | None:
+    """Main function
+    
+    Returns:
+        int | None: The exit code of the program, None to exit with code 0
+    """
     try:
         if len(sys.argv) != 2:
             print("Usage: python test.py <problem_id>")
-            sys.exit(1)
+            return 1
 
         problem_id = sys.argv[1]
         student_script = get_student_script(problem_id)  # Will exit if not found
@@ -222,14 +226,14 @@ def main():
         # Ensure the test folder exists
         if not os.path.exists(test_folder):
             print(f"Test folder not found: {test_folder}")
-            sys.exit(1)
+            return 1
 
         # If a unit test script exists, run it
         # If unit test fails, abort any further testing
         if os.path.exists(test_script):
             if not run_unit_test(test_script):
                 print("Unit tests failed. Aborting further testing.")
-                sys.exit(1)
+                return 1
 
         # If I/O tests are present, run them
         io_test_files = [f for f in os.listdir(test_folder) if f.endswith(".in")]
@@ -238,8 +242,8 @@ def main():
 
     except Exception as e:
         print(f"An error occurred: {e}")
-        sys.exit(1)
+        return 1
 
 
 if __name__ == "__main__":
-    main()
+    exit(main())
