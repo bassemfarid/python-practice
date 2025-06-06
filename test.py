@@ -3,7 +3,19 @@ import os
 import subprocess
 import sys
 import time
-from types import NoReturn
+from typing import NoReturn
+
+# Abstracts ANSI escape codes to help cleanup code
+class Colour:
+    GREY    = "\033[90m"
+    RED     = "\033[91m"
+    GREEN   = "\033[92m"
+    YELLOW  = "\033[93m"
+    BLUE    = "\033[94m"
+    MAGENTA = "\033[95m"
+    CYAN    = "\033[96m"
+    WHITE   = "\033[97m"
+    RESET   = "\033[0m"
 
 
 def is_numeric(value: int | float) -> bool:
@@ -66,6 +78,14 @@ def get_student_script(problem_id: str) -> str | NoReturn:
         sys.exit(1)
     return location
 
+def print_coloured(message: str, colour: str) -> None:
+    """Prings a coloured message. Resets the colour after the message
+    
+    Args:
+        message (str): The message to print
+        colour (str): The ANSI escape sequence colour to make the message
+    """
+    print(f"{colour}{message}{Colour.RESET}")
 
 def run_io_test(test_folder: str, student_script: str) -> None:
     """Run all I/O tests in the test folder. Stops on batch failure.
@@ -105,22 +125,22 @@ def run_io_test(test_folder: str, student_script: str) -> None:
             )
 
             if passed:
-                print(f"{test_id}: \033[92mPASS\033[0m ({execution_time_ms} ms)")  # Green
+                print(f"{test_id}: {Colour.GREEN}PASS {Colour.RESET}({execution_time_ms} ms)")
             else:
                 # Provide student with failure message, which includes:
                 # execution time, input, expected output, actual output
-                print(f"{test_id}: \033[91mFAIL\033[0m ({execution_time_ms} ms)")  # Red
+                print(f"{test_id}: {Colour.RED}FAIL {Colour.RESET}({execution_time_ms} ms)")
                 if isinstance(io_info, tuple):
-                    print("\n\033[93mOutput does not match expected output:\033[0m")
-                    print("\n\033[93mFor Input:\033[0m")
+                    print_coloured(f"\nOutput does not match expected output:", Colour.YELLOW)
+                    print_coloured(f"\nFor Input", Colour.YELLOW)
                     print(io_info[0])
-                    print("\n\033[93mExpected Output:\033[0m")
+                    print_coloured(f"\nExpected Output:", Colour.YELLOW)
                     print(io_info[1])
-                    print("\n\033[93mActual Output:\033[0m")
+                    print_coloured(f"\nActual Output:", Colour.YELLOW)
                     print(io_info[2])
                 # Provide instead with the specific exception that was thrown
                 else:
-                    print("\n\033[93mAn Error Occurred:\033[0m")
+                    print_coloured("\nAn Error Occurred:", Colour.YELLOW)
                     print(io_info)
                 print("=" * 40)
                 if batch == "sample":
