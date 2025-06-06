@@ -3,10 +3,18 @@ import os
 import subprocess
 import sys
 import time
+from types import NoReturn
 
 
-def is_numeric(value):
-    """Check if a value is numeric (int or float)."""
+def is_numeric(value: int | float) -> bool:
+    """Check if a value is numeric (int or float)
+    
+    Args:
+        value (int | float): The value to check
+
+    Returns:
+        bool: True if value is numeric, False if not
+    """
     try:
         float(value)
         return True
@@ -14,12 +22,18 @@ def is_numeric(value):
         return False
 
 
-def get_timeout(test_folder):
+def get_timeout(test_folder: str) -> int:
     """
     Get the timeout value.
 
     Timeout is read from a file named "timeout.txt" in the test folder.
     If the file does not exist or contains an invalid value, defaults to 1 second.
+
+    Args:
+        test_folder (str): The test folder to read from
+    
+    Returns:
+        int: The timeout found in test_folder/timeout.txt if found, else defaults to 1
     """
     timeout_file = os.path.join(test_folder, "timeout.txt")
     if os.path.exists(timeout_file):
@@ -32,8 +46,15 @@ def get_timeout(test_folder):
     return 1
 
 
-def get_student_script(problem_id):
-    """Get the path to the student's script based on the problem ID."""
+def get_student_script(problem_id: str) -> str | NoReturn:
+    """Get the path to the student's script based on the problem ID.
+    
+    Args:
+        problem_id (str): The problem ID
+    
+    Returns:
+        str | NoReturn: The location of the script if found. If there is an error, the program exits
+    """
     if "-" not in problem_id:
         print(f"Invalid problem ID format: {problem_id}")
         print("Expected format: <unit>-<chapter>-<problem>")
@@ -46,8 +67,13 @@ def get_student_script(problem_id):
     return location
 
 
-def run_io_test(test_folder, student_script):
-    """Run all I/O tests in the test folder. Stops on batch failure."""
+def run_io_test(test_folder: str, student_script: str) -> None:
+    """Run all I/O tests in the test folder. Stops on batch failure.
+    
+    Args:
+        test_folder (str): The path of the test folder
+        student_script (str): The path to the student's script
+    """
     batches = {}
     for f in sorted(os.listdir(test_folder)):
         if f.endswith(".in"):
@@ -105,8 +131,25 @@ def run_io_test(test_folder, student_script):
                     break
 
 
-def run_single_io_test(input_file, expected_output_file, student_script, timeout):
-    """Run a single I/O test and return success status and info."""
+def run_single_io_test(input_file: str,
+                       expected_output_file: str,
+                       student_script: str,
+                       timeout: int) -> tuple[bool, str | tuple[str, str, str], int]:
+    """Run a single I/O test and return success status and info.
+    
+    Args:
+        input_file (str): The path to the file that contains input data
+        expected_output_file (str): The path to the file that contains the expected output
+        student_script (str): The path to the student's script
+        timeout (int): The max amount of time the student's script is allowed to take
+    
+    Returns:
+        tuple[bool, str | tuple[str, str, str], int]: A tuple which contains the following:
+                                                      (Whether the script passed,
+                                                      Either an error message or IO data formatted
+                                                                                 (input, expected_output, actual_output),
+                                                      The execution time in milliseconds)
+    """
 
     # Pull the input and expected output from the files
     with open(input_file, "r") as f:
@@ -137,14 +180,21 @@ def run_single_io_test(input_file, expected_output_file, student_script, timeout
         return (passed, (input_data, expected_output, actual_output), execution_time_ms)
 
     except subprocess.TimeoutExpired:
-        return False, "Time Limit Exceeded!", timeout * 1000
+        return (False, "Time Limit Exceeded!", timeout * 1000)
 
     except Exception as e:
-        return False, str(e), 0
+        return (False, str(e), 0)
 
 
-def run_unit_test(test_script):
-    """Run a unit test script and return success status."""
+def run_unit_test(test_script: str) -> bool:
+    """Run a unit test script and return success status.
+    
+    Args:
+        test_script (str): The path to the test script
+    
+    Returns:
+        bool: True if the script passed, False if not
+    """
     try:
         subprocess.run(
             [sys.executable, test_script],
@@ -158,6 +208,7 @@ def run_unit_test(test_script):
 
 
 def main():
+    """Main function"""
     try:
         if len(sys.argv) != 2:
             print("Usage: python test.py <problem_id>")
