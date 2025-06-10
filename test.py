@@ -3,7 +3,8 @@ import os
 import subprocess
 import sys
 import time
-from typing import NoReturn
+from typing import NoReturn, Any
+import numbers
 
 # Abstracts ANSI escape codes to help cleanup code
 class Colour:
@@ -18,20 +19,16 @@ class Colour:
     RESET   = "\033[0m"
 
 
-def is_numeric(value: int | float) -> bool:
+def is_numeric(value: Any) -> bool:
     """Check if a value is numeric (int or float)
     
     Args:
-        value (int | float): The value to check
+        value (Any): The value to check
 
     Returns:
         bool: True if value is numeric, False if not
     """
-    try:
-        float(value)
-        return True
-    except ValueError:
-        return False
+    return isinstance(value, numbers.Number)
 
 
 def get_timeout(test_folder: str) -> int:
