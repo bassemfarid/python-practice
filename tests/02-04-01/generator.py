@@ -1,0 +1,1 @@
+print(["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][int(input())-1])
