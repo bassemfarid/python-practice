@@ -17,28 +17,29 @@
 
 **NOTE:** Replace XX-XX-XX with the problem ID (e.g., 01-02-01). This will automatically check your solution using the provided test cases.
 
-## Getting Updates
+## Keeping Your Repository Updated
 
-As new problems are added, you’ll need to pull updates into your fork.
+When new problems are added, you’ll need to pull updates from the original repository into your copy.
 
 
-1. **Add Upstream Remote** – Ensure this repository is set as the upstream remote. If it’s not, add it:
+1. **Add Upstream Remote** – Run this once inside your local repository (replace if you already added it):
 
     ```sh
     git remote add upstream https://github.com/bassemfarid/python-practice.git
     ```
-2. **Fetch and Merge** – Fetch the updates and merge them:
+
+2. **Pull the Latest Updates** – Fetch the updates and merge them:
 
     ```sh
-    git fetch upstream
-    git merge upstream/main --allow-unrelated-histories --no-commit --no-ff
+    git pull upstream main
     ```
-    If this is your first merge from upstream, Git may ask you to resolve conflicts or enter a commit message. If not, you can exclude `--allow-unrelated-histories`.
-3. **Commit** – Commit the changes you merged in.
+    If Git reports conflicts, open the files it lists, fix the <<<<<<< >>>>>>> sections, then commit.
+
+3. **Commit (if needed)** – If the pull created changes, finish with:
     ```sh
     git commit -m "Merged updates from upstream"
     ```
-    This will pull new problems and tests into your repository without overwriting your existing solutions.
+    This way, you’ll get the new problems and tests without losing your own work.
 
 ## File Structure
 ```
