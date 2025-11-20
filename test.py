@@ -50,12 +50,12 @@ def get_student_script(problem_id):
     if "-" not in problem_id:
         print(f"Invalid problem ID format: {problem_id}")
         print("Expected format: <unit>-<chapter>-<problem>")
-        sys.exit(1)
+        raise ValueError("Invalid problem ID format")
     unit, chapter, _ = problem_id.split("-")
     location = os.path.join(f"Unit-{unit}", f"Chapter-{chapter}", f"{problem_id}.py")
     if not os.path.exists(location):
-        print(f"Student script not found: {location}")
-        sys.exit(1)
+        # print(f"Student script not found: {location}") # Let caller handle printing if needed
+        raise FileNotFoundError(f"Student script not found: {location}")
     return location
 
 
@@ -82,9 +82,13 @@ def run_io_test(test_folder, student_script):
 
     timeout = get_timeout(test_folder)
 
+    passed_count = 0
+    failed_count = 0
+
     for batch in sorted_batches:
         print("=" * 40)
         print(f"Running batch {batch} tests...")
+        batch_failed = False
         for test_id in sorted(batches[batch]):
             expected_output_file = os.path.join(test_folder, f"{test_id}.out")
             if not os.path.exists(expected_output_file):
@@ -98,9 +102,9 @@ def run_io_test(test_folder, student_script):
 
             if passed:
                 print(f"{test_id}: {Colour.GREEN}PASS {Colour.RESET}({execution_time_ms} ms)")
+                passed_count += 1
             else:
-                # Provide student with failure message, which includes:
-                # execution time, input, expected output, actual output
+                # Provide student with failure message
                 print(f"{test_id}: {Colour.RED}FAIL {Colour.RESET}({execution_time_ms} ms)")
                 if isinstance(io_info, tuple):
                     print_coloured("\nOutput does not match expected output:", Colour.YELLOW)
@@ -110,17 +114,34 @@ def run_io_test(test_folder, student_script):
                     print(io_info[1])
                     print_coloured("\nActual Output:", Colour.YELLOW)
                     print(io_info[2])
-                # Provide instead with the specific exception that was thrown
                 else:
                     print_coloured("\nAn Error Occurred:", Colour.YELLOW)
                     print(io_info)
                 print("=" * 40)
+                failed_count += 1
+                batch_failed = True
+                
                 if batch == "sample":
                     print("Sample tests failed. Aborting further testing.")
-                    return
+                    return (passed_count, failed_count)
                 else:
                     print(f"Batch {batch} failed. Skipping remaining tests in this batch.")
                     break
+        
+        if batch_failed:
+             # If a batch failed, we might skip subsequent batches? 
+             # The original code didn't explicitly break the outer loop on non-sample failure,
+             # but `run_io_test` logic was a bit loose.
+             # Actually, looking at original code:
+             # if batch == "sample": return
+             # else: break (breaks inner loop) -> continues to next batch?
+             # Wait, `break` breaks the inner loop (tests in batch).
+             # Then it goes to next batch.
+             # So it continues testing other batches?
+             # "Skipping remaining tests in this batch." implies yes.
+             pass
+
+    return (passed_count, failed_count)
 
 
 def run_single_io_test(input_file, expected_output_file, student_script, timeout):
@@ -162,50 +183,121 @@ def run_single_io_test(input_file, expected_output_file, student_script, timeout
 
 
 def run_unit_test(test_script):
-    """Run a unit test script and return success status."""
+    """Run a unit test script and return (passed_count, failed_count)."""
     try:
         subprocess.run(
             [sys.executable, test_script],
             check=True,
             timeout=get_timeout(os.path.dirname(test_script)),
         )
-        return True
+        return (1, 0)
     except subprocess.CalledProcessError:
         print(f"Unit test script {test_script} failed.")
-        return False
+        return (0, 1)
 
 
-def main():
+def run_tests_for_problem(problem_id):
+    """Run tests for a specific problem ID. Returns ('PASS'/'FAIL'/'SKIP', passed_count, failed_count)."""
     try:
-        if len(sys.argv) != 2:
-            print("Usage: python test.py <problem_id>")
-            return 1
+        try:
+            student_script = get_student_script(problem_id)
+        except FileNotFoundError as e:
+            print(f"Skipping {problem_id}: {e}")
+            return ("SKIP", 0, 0)
+        except ValueError as e:
+            print(f"Skipping {problem_id}: {e}")
+            return ("SKIP", 0, 0)
 
-        problem_id = sys.argv[1]
-        student_script = get_student_script(problem_id)  # Will exit if not found
         test_folder = os.path.join("tests", problem_id)
         test_script = os.path.join(test_folder, f"test_{problem_id}.py")
 
         # Ensure the test folder exists
         if not os.path.exists(test_folder):
             print(f"Test folder not found: {test_folder}")
-            return 1
+            return ("SKIP", 0, 0)
+
+        print(f"\nRunning tests for {problem_id}...")
+
+        total_passed = 0
+        total_failed = 0
+        problem_failed = False
 
         # If a unit test script exists, run it
-        # If unit test fails, abort any further testing
         if os.path.exists(test_script):
-            if not run_unit_test(test_script):
-                print("Unit tests failed. Aborting further testing.")
-                return 1
+            u_pass, u_fail = run_unit_test(test_script)
+            total_passed += u_pass
+            total_failed += u_fail
+            if u_fail > 0:
+                print(f"Unit tests failed for {problem_id}.")
+                problem_failed = True
 
         # If I/O tests are present, run them
         io_test_files = [f for f in os.listdir(test_folder) if f.endswith(".in")]
         if io_test_files:
-            run_io_test(test_folder, student_script)
+            io_pass, io_fail = run_io_test(test_folder, student_script)
+            total_passed += io_pass
+            total_failed += io_fail
+            if io_fail > 0:
+                problem_failed = True
+        
+        if problem_failed:
+            return ("FAIL", total_passed, total_failed)
+        else:
+            return ("PASS", total_passed, total_failed)
 
     except Exception as e:
-        print(f"An error occurred: {e}")
+        print(f"An error occurred while testing {problem_id}: {e}")
+        return ("FAIL", 0, 0)
+
+
+def main():
+    # If arguments are provided, run for specific problem
+    if len(sys.argv) > 1:
+        problem_id = sys.argv[1]
+        run_tests_for_problem(problem_id)
+        return 0
+
+    # Otherwise, run all tests
+    print("Running all tests...")
+    tests_dir = "tests"
+    if not os.path.exists(tests_dir):
+        print("Tests directory not found.")
         return 1
+
+    # Get all subdirectories in tests/
+    problem_ids = [d for d in os.listdir(tests_dir) if os.path.isdir(os.path.join(tests_dir, d))]
+    
+    def sort_key(pid):
+        parts = pid.split('-')
+        return [int(p) if p.isdigit() else p for p in parts]
+    
+    problem_ids.sort(key=sort_key)
+
+    question_stats = {"PASS": 0, "FAIL": 0, "SKIP": 0}
+    test_case_stats = {"PASS": 0, "FAIL": 0}
+    total_questions = 0
+
+    for problem_id in problem_ids:
+        total_questions += 1
+        status, p_count, f_count = run_tests_for_problem(problem_id)
+        question_stats[status] += 1
+        test_case_stats["PASS"] += p_count
+        test_case_stats["FAIL"] += f_count
+        print("-" * 50)
+
+    print("\n" + "=" * 40)
+    print("           TEST SUMMARY")
+    print("=" * 40)
+    print(f"QUESTIONS CHECKED:      {total_questions}")
+    print(f"Questions Fully Passed: {Colour.GREEN}{question_stats['PASS']}{Colour.RESET}")
+    print(f"Questions Failed:       {Colour.RED}{question_stats['FAIL']}{Colour.RESET}")
+    print(f"Questions Skipped:      {Colour.YELLOW}{question_stats['SKIP']}{Colour.RESET}")
+    print("-" * 40)
+    print(f"Total Test Cases Passed: {Colour.GREEN}{test_case_stats['PASS']}{Colour.RESET}")
+    print(f"Total Test Cases Failed: {Colour.RED}{test_case_stats['FAIL']}{Colour.RESET}")
+    print("=" * 40)
+
+    return 0 if question_stats["FAIL"] == 0 else 1
 
 
 if __name__ == "__main__":
