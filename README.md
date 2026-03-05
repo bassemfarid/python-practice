@@ -1,28 +1,44 @@
 # Python Practice
 
-## How to Solve Problems  
+## How to Solve Problems
 
-1. **Fork and Clone** – Fork this repository and clone it to your local machine.  
-2. **Read the Problem** – Open the `XX-XX-XX.md` file in the problem folder to review the instructions.  
-3. **Write Your Code** – Create a `XX-XX-XX.py` file in the same folder and implement your solution.  
-4. **Test Your Solution** – Run the following command in the terminal:  
+1. **Fork and Clone** – Fork this repository and clone it to your local machine.
+2. **Read the Problem** – Open the `XX-XX-XX.md` file in the problem folder to review the instructions.
+3. **Write Your Code** – Create a `XX-XX-XX.py` file in the same folder and implement your solution.
+4. **Test Your Solution** – Run the following command in the terminal:
 
    ```sh
     # On macOS/Linux
-    python3 test.py XX-XX-XX  
+    python3 test.py XX-XX-XX
 
     # On Windows
-    python test.py XX-XX-XX  
+    python test.py XX-XX-XX
    ```
 
-**NOTE:** Replace XX-XX-XX with the problem ID (e.g., 01-02-01). This will automatically check your solution using the provided test cases.
+**NOTE:** Replace `XX-XX-XX` with the problem ID (e.g., `01-02-01`). The ID format is `Unit-Chapter-Question`, so `01-02-01` corresponds to the file at `Unit-01/Chapter-02/01-02-01.py`. This will automatically check your solution using the provided test cases.
+
+You can also run all tests at once to check your overall progress:
+
+```sh
+# On macOS/Linux
+python3 test.py
+
+# On Windows
+python test.py
+```
+
+### Understanding Test Output
+
+- **Sample tests** run first. If a sample test fails, all further testing for that problem is aborted — fix the sample case before moving on.
+- **Batch tests** (1, 2, 3, ...) run in order of difficulty. If a test fails within a batch, the remaining tests in that batch are skipped, but later batches still run.
+- The output shows how many tests were skipped so you know what wasn't checked.
 
 ## Keeping Your Repository Updated
 
-When new problems are added, you’ll need to pull updates from the original repository into your copy.
+When new problems are added, you'll need to pull updates from the original repository into your copy.
 
 
-1. **Add Upstream Remote** – Run this once inside your local repository (replace if you already added it):
+1. **Add Upstream Remote** – Run this once inside your local repository (skip this step if you already added it):
 
     ```sh
     git remote add upstream https://github.com/bassemfarid/python-practice.git
@@ -33,22 +49,18 @@ When new problems are added, you’ll need to pull updates from the original rep
     ```sh
     git pull upstream main
     ```
-    If Git reports conflicts, open the files it lists, fix the <<<<<<< >>>>>>> sections, then commit.
-
-3. **Commit (if needed)** – If the pull created changes, finish with:
+    If Git reports conflicts, open the files it lists, keep the code you want, delete the conflict markers (`<<<<<<<`, `=======`, `>>>>>>>`), save the file, then commit:
     ```sh
-    git commit -m "Merged updates from upstream"
+    git add .
+    git commit -m "Resolved merge conflicts"
     ```
-    This way, you’ll get the new problems and tests without losing your own work.
 
 ## File Structure
 ```
 python-practice/
 │── test.py  # Central test script
 │── README.md
-│── main.py  # Code playground without tests
 │── .gitignore
-│── .venv/
 │
 ├── Unit-01/  # Unit folder
 │   ├── Chapter-02/  # Chapter folder
